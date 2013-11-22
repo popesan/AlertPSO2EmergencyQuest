@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using Twitterizer;
 
-namespace Model.AlertPSO2EmergencyQuest
+namespace AlertPSO2EmergencyQuest.Model
 {
-    class CommTwitterizer
+    public class CommTwitterizer
     {
 
         /// <summary>
@@ -18,7 +18,21 @@ namespace Model.AlertPSO2EmergencyQuest
         const string CONSUMER_SECRET = "mNTCIT45WmyK3xeVjdBEapBZJFLIvo7UVS1dXG4IoY";
         const string ACCESS_TOKEN = "173403180-pvq90s928jKF45M40fhIh4mqB7Jf0HmJzWJkAGkL";
         const string ACCESS_TOKEN_SECRET = "7wpwfDW0mONCughIDXW7EJueZWqjdRd6iA49JHmEVFC4i";
+        
+        //トークンを設定
+        private OAuthTokens tokens = new OAuthTokens();
+        
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public CommTwitterizer()
+        {
 
+            tokens.AccessToken = ACCESS_TOKEN;
+            tokens.AccessTokenSecret = ACCESS_TOKEN_SECRET;
+            tokens.ConsumerKey = CONSUMER_KEY;
+            tokens.ConsumerSecret = CONSUMER_SECRET;
+        }
 
         void testTwit()
         {
@@ -38,7 +52,7 @@ namespace Model.AlertPSO2EmergencyQuest
                 userID = GetUserID(tokens, username);
                 //ユーザのタイムラインを取得
                 //GetUserTimeline(tokens);
-                GetUserTimeline(tokens, username);
+                GetUserTimeline(username);
                 TwitterResponse<TwitterSearchResultCollection> ret
         = TwitterSearch.Search(tokens, username, new SearchOptions() { Locale = "jpn", });
                 TwitterSearchResultCollection results = ret.ResponseObject;
@@ -59,7 +73,7 @@ namespace Model.AlertPSO2EmergencyQuest
         /// </summary>
         /// <param name="tokens">トークン</param>
         /// <param name="username">ユーザ名</param>
-        private static void GetUserDetails(OAuthTokens tokens, String username)
+        public void GetUserDetails(OAuthTokens tokens, String username)
         {
             try
             {
@@ -88,7 +102,7 @@ namespace Model.AlertPSO2EmergencyQuest
         /// </summary>
         /// <param name="tokens">トークン</param>
         /// <param name="username">スクリーンネーム</param>
-        private static int GetUserID(OAuthTokens tokens, String screenname)
+        public int GetUserID(OAuthTokens tokens, String screenname)
         {
             TwitterUser user = null;
             try
@@ -116,11 +130,11 @@ namespace Model.AlertPSO2EmergencyQuest
         /// ユーザ本人のタイムラインを取得
         /// </summary>
         /// <param name="tokens">トークン</param>
-        private static void GetUserTimeline(OAuthTokens tokens)
+        public void GetUserTimeline()
         {
             try
             {
-                TwitterResponse<TwitterStatusCollection> res = TwitterTimeline.UserTimeline(tokens);
+                TwitterResponse<TwitterStatusCollection> res = TwitterTimeline.UserTimeline(this.tokens);
                 foreach (TwitterStatus status in res.ResponseObject)
                 {
                     Console.WriteLine(status.Text);
@@ -135,27 +149,29 @@ namespace Model.AlertPSO2EmergencyQuest
         /// 指定ユーザのタイムラインを取得
         /// </summary>
         /// <param name="tokens">トークン</param>
-        private static void GetUserTimeline(OAuthTokens tokens, string screenName)
+        public IEnumerable<TwitterStatus> GetUserTimeline(string screenName)
         {
             try
             {
                 UserTimelineOptions option = new UserTimelineOptions()
                 {
                     ScreenName = screenName,
-
+                    Count=5
                 };
 
                 TwitterResponse<TwitterStatusCollection> res
-                    = TwitterTimeline.UserTimeline(tokens, option);
-
+                    = TwitterTimeline.UserTimeline(this.tokens, option);
+                
                 foreach (TwitterStatus status in res.ResponseObject)
                 {
                     Console.WriteLine(status.Text);
                 }
+                return res.ResponseObject;
             }
             catch (Exception exp)
             {
                 Console.WriteLine(exp.Message);
+                throw;
             }
         }
         /// <summary>
@@ -163,7 +179,7 @@ namespace Model.AlertPSO2EmergencyQuest
         /// </summary>
         /// <param name="tokens">トークン</param>
         /// <param name="body">本文</param>
-        private static void DoUpdate(OAuthTokens tokens, String body)
+        public  void DoUpdate(OAuthTokens tokens, String body)
         {
             try
             {

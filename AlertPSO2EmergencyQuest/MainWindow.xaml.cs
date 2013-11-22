@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using System.Windows.Threading;
+using AlertPSO2EmergencyQuest.Model;
 
 namespace AlertPSO2EmergencyQuest
 {
@@ -21,6 +22,7 @@ namespace AlertPSO2EmergencyQuest
     /// </summary>
     public partial class MainWindow : Window
     {
+        CommPSO2Bot bot;        
         public MainWindow()
         {
             InitializeComponent();
@@ -29,6 +31,8 @@ namespace AlertPSO2EmergencyQuest
             timer.Tick += timer_Tick;
             timer.Interval = new TimeSpan(0, 0, 1);
             timer.Start();
+
+            bot = new CommPSO2Bot();
         }
 
         private void MinButton_Click(object sender, RoutedEventArgs e)
@@ -43,6 +47,7 @@ namespace AlertPSO2EmergencyQuest
         void timer_Tick(object sender, EventArgs e)
         {
             this.textBlock1.Text = DateTime.Now.ToString("HH:mm:ss");
+            bot.GetStatus();
         }
 
         private void MaxButton_Click(object sender, RoutedEventArgs e)
