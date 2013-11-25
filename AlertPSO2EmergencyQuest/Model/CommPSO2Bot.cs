@@ -38,6 +38,48 @@ namespace AlertPSO2EmergencyQuest.Model
             set { intervalMinutes = value; }
         }
 
+        private DateTime fromTime;
+        /// <summary>
+        /// イベント期間：～から
+        /// </summary>
+        public DateTime FromTime
+        {
+            get { return fromTime; }
+        }
+
+        private DateTime toTime;
+        /// <summary>
+        /// イベント期間：～まで
+        /// </summary>
+        public DateTime ToTime
+        {
+            get { return toTime; }
+        }
+
+        private string event1;
+        /// <summary>
+        /// イベント名：大分類
+        /// </summary>
+        public string Event1
+        {
+            get { return event1; }
+        }
+        private string event2;
+        /// <summary>
+        /// イベント名：小分類
+        /// </summary>
+        public string Event2
+        {
+            get { return event2; }
+        }
+        private status currentStatus;
+        /// <summary>
+        /// 現在のステータス
+        /// </summary>
+        public status CurrentStatus
+        {
+            get { return currentStatus; }
+        }
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -68,10 +110,11 @@ namespace AlertPSO2EmergencyQuest.Model
                 DateTime after5Min = DateTime.Now.AddMinutes(5);
                 foreach (var data in twitterAccess.GetUserTimeline(this.botName))
                 {
+#warning デバッグ用
                     this.parseStatus(data.Text);
                     if ((before5Min < data.CreatedDate) && (data.CreatedDate < after5Min))
                     {
-                        Console.WriteLine(data.Text);
+                        this.parseStatus(data.Text);
                     }
                 }
             }
@@ -79,29 +122,125 @@ namespace AlertPSO2EmergencyQuest.Model
         }
 
         /// <summary>
-        /// botのツイートをパーシングします
+        /// botのツイートをパーシングしステータスを取得します
         /// </summary>
         /// <param name="statusStr"></param>
         internal void parseStatus(string statusStr)
         {
-            string dataMatch=@"([0-9]|([0-1][0-9]|[2][0-3]))[:][0-5][0-9].*";
-            if (System.Text.RegularExpressions.Regex.IsMatch(
-                statusStr,dataMatch))
+            DateTime nowtime = DateTime.Now;
+            List<DateTime> perseData =
+                perseDateTime(statusStr);
+            perseData.Sort((a, b) => a.CompareTo(b));
+            if (perseData.Count == 2)
             {
-                //時間っぽい文字列をすべて抽出する
-                System.Text.RegularExpressions.MatchCollection mc =
-                System.Text.RegularExpressions.Regex.Matches(statusStr, dataMatch);
-                Console.WriteLine("郵便番号が含まれています");
-                foreach (var data in mc)
+                fromTime = perseData[0];
+                toTime = perseData[1];
+                if ((fromTime.AddMinutes(-30) > nowtime)
+                    && (nowtime > fromTime))
                 {
-                    string test = data.ToString();
-                    DateTime date1 = DateTime.Parse(test);
+                    this.currentStatus = status.GetReady;
                 }
+                else if ((fromTime <= nowtime)
+                   && (nowtime <= toTime))
+                {
+                    this.currentStatus = status.InQuest;
+                }
+                else
+                {
+                    this.currentStatus = status.OverTimeQuest;
+                }
+
+            }
+            if (perseEvent(statusStr, out event1, out event2))
+            {
+
+            }
+            else
+            {
+
             }
 
+        }
 
+        /// <summary>
+        /// イベントをツイートからperseします
+        /// </summary>
+        /// <param name="statusStr"></param>
+        /// <param name="bigEvent"></param>
+        /// <param name="smallEvent"></param>
+        /// <returns></returns>
+        internal bool perseEvent(string statusStr, out string bigEvent, out string smallEvent)
+        {
+            bool output=false;
+            bigEvent = "";
+            smallEvent = "";
 
+            string event1Match = @"【[^】]+】";//【】で囲まれた部分を抽出する正規表現
+            string event2Match = @"（[^）]+）";//（）で囲まれた部分を抽出する正規表現
 
+            if (System.Text.RegularExpressions.Regex.IsMatch(
+                statusStr, event1Match))
+            {
+                System.Text.RegularExpressions.MatchCollection me1 =
+                    System.Text.RegularExpressions.Regex.Matches(statusStr, event1Match);
+
+                foreach (var data in me1)
+                {
+                    bigEvent = data.ToString();
+                    output = true;
+                }
+            }
+            if (System.Text.RegularExpressions.Regex.IsMatch(
+                statusStr, event2Match))
+            {
+                System.Text.RegularExpressions.MatchCollection me2 =
+                    System.Text.RegularExpressions.Regex.Matches(statusStr, event2Match);
+
+                foreach (var data in me2)
+                {
+                    smallEvent = data.ToString();
+                    output = true;
+                }
+            }
+            return output;
+        }
+        /// <summary>
+        /// ツイートの中にある時間データをperseします
+        /// </summary>
+        /// <param name="statusStr"></param>
+        /// <returns></returns>
+        internal List<DateTime> perseDateTime(string statusStr)
+        {
+            List<DateTime> output = new List<DateTime>();
+            string timeMatch = @"([0-9]|([0-1][0-9]|[2][0-3]))[:][0-5][0-9]+";//hh:mm形式の時間抽出正規表現
+            string dataMatch = @"(\[([1-9]|[1][0-2])/((3[01]|[1-2][0-9])|[1-9])\])+";//[MM:DD]形式の日付抽出正規表現
+            if (System.Text.RegularExpressions.Regex.IsMatch(
+                statusStr, dataMatch))
+            {
+                string tDay = "";
+                System.Text.RegularExpressions.MatchCollection md =
+                    System.Text.RegularExpressions.Regex.Matches(statusStr, dataMatch);
+
+                foreach (var data in md)
+                {
+                    tDay = data.ToString().Replace(@"[", "");
+                    tDay = tDay.Replace(@"]", "");
+                    tDay = DateTime.Now.Year.ToString() + "/" + tDay;
+                }
+
+                if (System.Text.RegularExpressions.Regex.IsMatch(
+                    statusStr, timeMatch))
+                {
+                    //時間っぽい文字列をすべて抽出する
+                    System.Text.RegularExpressions.MatchCollection mh =
+                    System.Text.RegularExpressions.Regex.Matches(statusStr, timeMatch);
+                    foreach (var time in mh)
+                    {
+                        output.Add(DateTime.Parse(tDay + " " + time.ToString()));
+                    }
+                }
+            }
+            return output;
         }
     }
 }
