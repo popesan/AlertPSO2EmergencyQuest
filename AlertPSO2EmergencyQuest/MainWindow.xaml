@@ -35,6 +35,18 @@
                                 Duration="0:0:1" />
                 </Storyboard>
             </BeginStoryboard>
+            <BeginStoryboard>
+                <Storyboard >
+                    <DoubleAnimation
+                                Storyboard.TargetName="messageText" 
+                                Storyboard.TargetProperty="(Canvas.Left)"
+                                FillBehavior="HoldEnd"
+                                From="410"
+                                To="-500"
+                                RepeatBehavior="Forever"
+                                Duration="0:0:5" />
+                </Storyboard>
+            </BeginStoryboard>
         </EventTrigger>
     </Window.Triggers>
     <Grid>
@@ -67,7 +79,7 @@
 
         </StackPanel>
         <Canvas Grid.Row="2">
-            <TextBlock Text="ここにメッセージを出す" Foreground="White"></TextBlock>
+            <TextBlock Name="messageText" Text="ここにメッセージを出す" Foreground="White"></TextBlock>
         </Canvas>
     </Grid>
 </Window>

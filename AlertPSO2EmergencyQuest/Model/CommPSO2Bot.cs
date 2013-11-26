@@ -89,6 +89,7 @@ namespace AlertPSO2EmergencyQuest.Model
             twitterAccess = new CommTwitterizer();
             beforeTime = DateTime.Now;
             this.intervalMinutes = 3;
+            this.currentStatus = status.OverTimeQuest;
         }
 
         /// <summary>
@@ -100,10 +101,10 @@ namespace AlertPSO2EmergencyQuest.Model
         {
             bool output = true;
 #warning デバッグ用
-            if (TimeSpan.FromTicks(DateTime.Now.Ticks - beforeTime.Ticks).Seconds
-                > this.intervalMinutes)
-            //if (TimeSpan.FromTicks(DateTime.Now.Ticks-beforeTime.Ticks).Minutes
+            //if (TimeSpan.FromTicks(DateTime.Now.Ticks - beforeTime.Ticks).Seconds
             //    > this.intervalMinutes)
+            if (TimeSpan.FromTicks(DateTime.Now.Ticks-beforeTime.Ticks).Minutes
+                > this.intervalMinutes)
             {
                 beforeTime = DateTime.Now;
                 DateTime before5Min = DateTime.Now.AddMinutes(-5);
@@ -111,7 +112,8 @@ namespace AlertPSO2EmergencyQuest.Model
                 foreach (var data in twitterAccess.GetUserTimeline(this.botName))
                 {
 #warning デバッグ用
-                    this.parseStatus(data.Text);
+                    //this.parseStatus(data.Text);
+                    //break;
                     if ((before5Min < data.CreatedDate) && (data.CreatedDate < after5Min))
                     {
                         this.parseStatus(data.Text);
@@ -128,6 +130,9 @@ namespace AlertPSO2EmergencyQuest.Model
         internal void parseStatus(string statusStr)
         {
             DateTime nowtime = DateTime.Now;
+#warning デバッグ用コード
+            //DateTime nowtime = DateTime.Parse("2013/11/26 10:15:00");
+
             List<DateTime> perseData =
                 perseDateTime(statusStr);
             perseData.Sort((a, b) => a.CompareTo(b));
@@ -135,13 +140,13 @@ namespace AlertPSO2EmergencyQuest.Model
             {
                 fromTime = perseData[0];
                 toTime = perseData[1];
-                if ((fromTime.AddMinutes(-30) > nowtime)
-                    && (nowtime > fromTime))
+                if ((fromTime.AddMinutes(-30).Ticks < nowtime.Ticks)
+                    && (nowtime.Ticks < fromTime.Ticks))
                 {
                     this.currentStatus = status.GetReady;
                 }
-                else if ((fromTime <= nowtime)
-                   && (nowtime <= toTime))
+                else if ((fromTime.Ticks <= nowtime.Ticks)
+                   && (nowtime.Ticks <= toTime.Ticks))
                 {
                     this.currentStatus = status.InQuest;
                 }

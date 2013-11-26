@@ -33,6 +33,7 @@ namespace AlertPSO2EmergencyQuest
             timer.Start();
 
             bot = new CommPSO2Bot();
+            this.messageText.Text = outputStatusTxt();
         }
 
         private void MinButton_Click(object sender, RoutedEventArgs e)
@@ -47,9 +48,29 @@ namespace AlertPSO2EmergencyQuest
         void timer_Tick(object sender, EventArgs e)
         {
             this.textBlock1.Text = DateTime.Now.ToString("HH:mm:ss");
-            bot.GetStatus();
+            this.messageText.Text = outputStatusTxt();
+
         }
 
+        private string outputStatusTxt()
+        {
+            string output = "";
+            bot.GetStatus();
+            
+            switch (bot.CurrentStatus)
+            {
+                case CommPSO2Bot.status.OverTimeQuest:
+                    output = "現在クエストは行われておりません";
+                    break;
+                case CommPSO2Bot.status.GetReady:
+                    output = bot.FromTime.ToString() + "より" + bot.Event1 + "-" + bot.Event2 + "が行われます";
+                    break;
+                case CommPSO2Bot.status.InQuest:
+                    output = bot.FromTime.ToString() + "～" + bot.ToTime.ToString() + "期間中" + bot.Event1 + "-" + bot.Event2 + "が行われております";
+                    break;
+            }
+            return output;
+        }
         private void MaxButton_Click(object sender, RoutedEventArgs e)
         {
             SettingWindow setWindow = new SettingWindow();
