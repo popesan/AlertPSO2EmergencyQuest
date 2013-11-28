@@ -35,6 +35,14 @@ namespace AlertPSO2EmergencyQuest
             bot = new CommPSO2Bot();
             this.messageText.Text = outputStatusTxt();
         }
+        
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // クローズ処理をキャンセルして、タスクバーの表示も消す
+            e.Cancel = true;
+            this.WindowState = System.Windows.WindowState.Minimized;
+            this.ShowInTaskbar = false;
+        }
 
         private void MinButton_Click(object sender, RoutedEventArgs e)
         {

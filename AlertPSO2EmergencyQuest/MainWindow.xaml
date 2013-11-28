@@ -3,9 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
         Name="windowBase"
-        Title="MainWindow" Height="194" Width="410"  Background="Black">
+        Title="MainWindow" Height="194" Width="410"  Background="Black" Closing="Window_Closing">
     <Window.Resources>
-        <ResourceDictionary Source="./Resource/CaptionButtonStyle.xaml"/>
+        <ResourceDictionary Source="./Resources/CaptionButtonStyle.xaml"/>
     </Window.Resources>
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome CaptionHeight="{x:Static SystemParameters.CaptionHeight}"
@@ -65,7 +65,7 @@
             <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="5" HorizontalAlignment="Left"  VerticalAlignment="Top">
                 <TextBlock Name="textBlock1" FontSize="15" Foreground="LimeGreen" Width="Auto" VerticalAlignment="Center">
                 </TextBlock>
-                <Image Name="emergencyLight" Source="./Resource/img/emergency.png" Width="20"/>
+                <Image Name="emergencyLight" Source="./Resources/img/emergency.png" Width="20"/>
                 <Image Name="SettingButton"/>
             </StackPanel>
             <StackPanel Name="PanelChromeButtonArea" Grid.Column="1" Orientation="Horizontal" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Top">
