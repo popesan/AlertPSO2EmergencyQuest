@@ -70,6 +70,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\CommPSO2Bot.cs" />
+    <Compile Include="Model\EventPSO2.cs" />
     <Compile Include="NotifyIconWrapper.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -127,6 +128,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <Resource Include="Resources\YournameD7ScientificEighth.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\img\emergency.png" />
@@ -134,9 +136,7 @@
   <ItemGroup>
     <Resource Include="Resources\img\Icon1.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="NewFolder1\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -11,7 +11,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
 using System.Windows.Threading;
 using AlertPSO2EmergencyQuest.Model;
 
@@ -22,18 +21,15 @@ namespace AlertPSO2EmergencyQuest
     /// </summary>
     public partial class MainWindow : Window
     {
-        CommPSO2Bot bot;        
-        public MainWindow()
+
+        public MainWindow(EventPSO2 pso)
         {
             InitializeComponent();
 
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Tick += timer_Tick;
-            timer.Interval = new TimeSpan(0, 0, 1);
-            timer.Start();
+            pso.TimeTick+=this.timer_Tick;
 
-            bot = new CommPSO2Bot();
-            this.messageText.Text = outputStatusTxt();
+            this.messageText.Text = pso.GetCurentEventMessageTxt();
+            this.StateChanged+=new EventHandler(MainWindow_StateChanged);
         }
         
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -53,37 +49,45 @@ namespace AlertPSO2EmergencyQuest
         {
             Microsoft.Windows.Shell.SystemCommands.CloseWindow(this);
         }
+
         void timer_Tick(object sender, EventArgs e)
         {
-            this.textBlock1.Text = DateTime.Now.ToString("HH:mm:ss");
-            this.messageText.Text = outputStatusTxt();
-
+            this.textBlock1.Text = (sender as AlertPSO2EmergencyQuest.Model.EventPSO2).TiemTick;
+            this.messageText.Text = (sender as AlertPSO2EmergencyQuest.Model.EventPSO2).MessageTxt;
         }
 
-        private string outputStatusTxt()
-        {
-            string output = "";
-            bot.GetStatus();
-            
-            switch (bot.CurrentStatus)
-            {
-                case CommPSO2Bot.status.OverTimeQuest:
-                    output = "現在クエストは行われておりません";
-                    break;
-                case CommPSO2Bot.status.GetReady:
-                    output = bot.FromTime.ToString() + "より" + bot.Event1 + "-" + bot.Event2 + "が行われます";
-                    break;
-                case CommPSO2Bot.status.InQuest:
-                    output = bot.FromTime.ToString() + "～" + bot.ToTime.ToString() + "期間中" + bot.Event1 + "-" + bot.Event2 + "が行われております";
-                    break;
-            }
-            return output;
-        }
         private void MaxButton_Click(object sender, RoutedEventArgs e)
         {
             SettingWindow setWindow = new SettingWindow();
 
             setWindow.ShowDialog();
         }
+
+        private void MainWindow_StateChanged(object sender, EventArgs e)
+        {
+            
+            switch (this.WindowState)
+            {
+                case System.Windows.WindowState.Normal:
+                    Console.WriteLine("普通の大きさ");
+                    break;
+                case System.Windows.WindowState.Minimized:
+                    Console.WriteLine("最小化");
+                    break;
+                case System.Windows.WindowState.Maximized:
+                    Console.WriteLine("最大化");
+                    break;
+            }
+        }
+        public static RoutedEvent SampleEvent = EventManager.RegisterRoutedEvent(
+        "Sample", RoutingStrategy.Tunnel, typeof(RoutedEventHandler), typeof(MainWindow));
+
+        public event RoutedEventHandler Sample
+        {
+            add { this.AddHandler(SampleEvent, value); }
+            remove { this.RemoveHandler(SampleEvent, value); }
+        }
+
+
     }
 }

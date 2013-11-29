@@ -131,7 +131,7 @@ namespace AlertPSO2EmergencyQuest.Model
         {
             DateTime nowtime = DateTime.Now;
 #warning デバッグ用コード
-            //DateTime nowtime = DateTime.Parse("2013/11/26 10:15:00");
+            //DateTime nowtime = DateTime.Parse("2013/11/29 14:45:00");
 
             List<DateTime> perseData =
                 perseDateTime(statusStr);

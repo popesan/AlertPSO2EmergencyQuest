@@ -6,11 +6,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using System.Windows.Threading;
+using AlertPSO2EmergencyQuest.Model;
+
 namespace AlertPSO2EmergencyQuest
 {
     public partial class NotifyIconWrapper : Component
     {
         private App app;
+        
+
+        // 常駐させるウィンドウはここで保持する
+        private MainWindow win;
+        /*
+        private string messageTxt;
+        /// <summary>
+        /// イベント状況のテキスト出力
+        /// </summary>
+        public string MessageTxt
+        {
+            get { return messageTxt; }
+        }
+
+        private string timeTick;
+        /// <summary>
+        /// 現在の時間出力
+        /// </summary>
+        public string TiemTick
+        {
+            get { return timeTick; }
+        }*/
         public NotifyIconWrapper(App app)
         {
             InitializeComponent();
@@ -23,7 +49,13 @@ namespace AlertPSO2EmergencyQuest
             //contextmenustrip内のtextBoxのクリックイベントをハンドルします
             this.EndText.Click+=new EventHandler(EndText_Click);
             this.SettingText.Click+= new EventHandler(SettingText_Click);
-            
+
+            EventPSO2 pso = new EventPSO2();
+            pso.Quest += Pso2_Event;
+            pso.Start();
+
+            win = new MainWindow(pso);
+
          }
         /*
         public NotifyIconWrapper(IContainer container)
@@ -32,14 +64,7 @@ namespace AlertPSO2EmergencyQuest
 
             InitializeComponent();
         }*/
-        /*
-        private void contextMenuStrip1_Click(object sender, EventArgs e)
-        {
-            Console.WriteLine("menu1Clicked");
-        }
-        */
-        // 常駐させるウィンドウはここで保持する
-        private MainWindow win = new MainWindow();
+
 
         private void ShowWindow()
         {
@@ -76,8 +101,12 @@ namespace AlertPSO2EmergencyQuest
         /// <param name="e"></param>
         private void EndText_Click(object sender, EventArgs e)
         {
-            //Console.WriteLine("menu1Clicked");
-            app.Shutdown();//アプリケーションを終了します
+            DialogResult result=
+                MessageBox.Show("アプリケーションを終了しますか？", "確認", MessageBoxButtons.OKCancel);
+            if (result == DialogResult.OK)
+            {
+                app.Shutdown();//アプリケーションを終了します
+            }
         }
 
 
@@ -88,8 +117,16 @@ namespace AlertPSO2EmergencyQuest
         /// <param name="e"></param>
         private void SettingText_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("menu1Clicked");
         }
-
+        /// <summary>
+        /// PSO2イベント発生イベントハンドラ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Pso2_Event(object sender, EventArgs e)
+        {
+            Console.WriteLine("PSOいべんとはっせい");
+            ShowWindow();
+        }
     }
 }
