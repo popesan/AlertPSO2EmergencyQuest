@@ -85,10 +85,12 @@ namespace AlertPSO2EmergencyQuest.Model
         /// </summary>
         internal CommPSO2Bot()
         {
+#warning タイムライン名をデバッグのため変更tritri ‏@sakatri
+            //botName = "sakatri";
             botName = "pso2_emg_ship10";
             twitterAccess = new CommTwitterizer();
             beforeTime = DateTime.Now;
-            this.intervalMinutes = 3;
+            this.intervalMinutes = 1;
             this.currentStatus = status.OverTimeQuest;
         }
 
@@ -104,20 +106,25 @@ namespace AlertPSO2EmergencyQuest.Model
             //if (TimeSpan.FromTicks(DateTime.Now.Ticks - beforeTime.Ticks).Seconds
             //    > this.intervalMinutes)
             if (TimeSpan.FromTicks(DateTime.Now.Ticks-beforeTime.Ticks).Minutes
-                > this.intervalMinutes)
+                >= this.intervalMinutes)
             {
                 beforeTime = DateTime.Now;
-                DateTime before5Min = DateTime.Now.AddMinutes(-5);
-                DateTime after5Min = DateTime.Now.AddMinutes(5);
-                foreach (var data in twitterAccess.GetUserTimeline(this.botName))
+                DateTime before1hour = DateTime.Now.AddHours(-1);
+                var tweetDates = from x in twitterAccess.GetUserTimeline(this.botName)
+                           orderby x.CreatedDate descending
+                           where (before1hour <x.CreatedDate)
+                           select x.Text;
+
+                foreach (var tweetData in tweetDates)
                 {
 #warning デバッグ用
-                    //this.parseStatus(data.Text);
-                    //break;
+                    this.parseStatus(tweetData);
+                    break;
+                    /*
                     if ((before5Min < data.CreatedDate) && (data.CreatedDate < after5Min))
                     {
                         this.parseStatus(data.Text);
-                    }
+                    }*/
                 }
             }
             return output;
@@ -131,7 +138,7 @@ namespace AlertPSO2EmergencyQuest.Model
         {
             DateTime nowtime = DateTime.Now;
 #warning デバッグ用コード
-            //DateTime nowtime = DateTime.Parse("2013/11/29 14:45:00");
+            //nowtime = DateTime.Parse("2013/11/30 22:10:00");
 
             List<DateTime> perseData =
                 perseDateTime(statusStr);
@@ -139,8 +146,10 @@ namespace AlertPSO2EmergencyQuest.Model
             if (perseData.Count == 2)
             {
                 fromTime = perseData[0];
+                DateTime formTimeBefore30min = perseData[0];
+                formTimeBefore30min=formTimeBefore30min.AddMinutes(-30.0);
                 toTime = perseData[1];
-                if ((fromTime.AddMinutes(-30).Ticks < nowtime.Ticks)
+                if ((formTimeBefore30min.Ticks < nowtime.Ticks)
                     && (nowtime.Ticks < fromTime.Ticks))
                 {
                     this.currentStatus = status.GetReady;
@@ -218,7 +227,7 @@ namespace AlertPSO2EmergencyQuest.Model
         {
             List<DateTime> output = new List<DateTime>();
             string timeMatch = @"([0-9]|([0-1][0-9]|[2][0-3]))[:][0-5][0-9]+";//hh:mm形式の時間抽出正規表現
-            string dataMatch = @"(\[([1-9]|[1][0-2])/((3[01]|[1-2][0-9])|[1-9])\])+";//[MM:DD]形式の日付抽出正規表現
+            string dataMatch = @"(\[([1-9]|[1][0-2])/((3[01]|[1-2][0-9])|[0][1-9])\])+";//[MM:DD]形式の日付抽出正規表現
             if (System.Text.RegularExpressions.Regex.IsMatch(
                 statusStr, dataMatch))
             {
