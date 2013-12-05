@@ -12,6 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+
+using System.Windows.Media.Animation;  
 using AlertPSO2EmergencyQuest.Model;
 
 namespace AlertPSO2EmergencyQuest
@@ -21,7 +23,7 @@ namespace AlertPSO2EmergencyQuest
     /// </summary>
     public partial class MainWindow : Window
     {
-
+        EventPSO2 pso;
         public MainWindow(EventPSO2 pso)
         {
             InitializeComponent();
@@ -30,19 +32,26 @@ namespace AlertPSO2EmergencyQuest
 
             this.messageText.Text = pso.GetCurentEventMessageTxt();
             this.StateChanged+=new EventHandler(MainWindow_StateChanged);
+            this.pso = pso;
         }
         
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             // クローズ処理をキャンセルして、タスクバーの表示も消す
             e.Cancel = true;
+
+            
+            /*
             this.WindowState = System.Windows.WindowState.Minimized;
-            this.ShowInTaskbar = false;
+            this.ShowInTaskbar = false;*/
+            ClosingWindow();
         }
 
         private void MinButton_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Windows.Shell.SystemCommands.MinimizeWindow(this);
+            this.windowBase.Width = 0;
+            this.windowBase.Height = 0;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -88,6 +97,97 @@ namespace AlertPSO2EmergencyQuest
             remove { this.RemoveHandler(SampleEvent, value); }
         }
 
+        private void ResizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Double型で10から200までアニメーションさせる  
+            var animation = new DoubleAnimation  
+            {  
+                From = 10,  
+                To = 400  
+            };
+            this.windowBase.BeginAnimation(MainWindow.WidthProperty, animation);
+        }
+        private Storyboard myStoryboard;
+        public void ShowWindow()
+        {
+            
+            this.Show();
 
+            //キーフレームで時間を区切る
+            var frame0 = new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(new TimeSpan(1)));
+            var frame1 = new EasingDoubleKeyFrame(410, KeyTime.FromTimeSpan(new TimeSpan(5000000)));
+            var frame2 = new EasingDoubleKeyFrame(0,   KeyTime.FromTimeSpan(new TimeSpan(5000001)));
+            var frame3 = new EasingDoubleKeyFrame(150, KeyTime.FromTimeSpan(new TimeSpan(10000000)));
+            //キーフレームをアニメーションとしてまとめる
+            var animationWidth = new DoubleAnimationUsingKeyFrames();
+            animationWidth.KeyFrames.Add(frame0);
+            animationWidth.KeyFrames.Add(frame1);
+            //アニメーションをアニメーションさせたいオブジェクトクラスのプロパティにひもづける
+            //...ということはオブジェクト毎にアニメーションさせるのはだめ？
+            Storyboard.SetTargetName(animationWidth, this.Name);
+            Storyboard.SetTargetProperty(animationWidth, new PropertyPath(MainWindow.WidthProperty));
+
+            var animationHeight = new DoubleAnimationUsingKeyFrames();
+            animationHeight.KeyFrames.Add(frame2);
+            animationHeight.KeyFrames.Add(frame3);
+            Storyboard.SetTargetName(animationHeight, this.Name);
+            Storyboard.SetTargetProperty(animationHeight, new PropertyPath(MainWindow.HeightProperty));
+
+            //静的にひもづけられたストーリーボードへアニメーションを登録する
+            myStoryboard = new Storyboard();
+            myStoryboard.Children.Add(animationWidth);
+            myStoryboard.Children.Add(animationHeight);
+            //アニメーションを実行する
+            myStoryboard.Begin(this);
+
+
+            // ウィンドウ表示&最前面に持ってくる
+            if (this.WindowState == System.Windows.WindowState.Minimized)
+                this.WindowState = System.Windows.WindowState.Normal;
+
+            this.Activate();
+            // タスクバーでの表示をする
+            this.ShowInTaskbar = true;
+            //myStoryboard.Stop();
+        }
+        public void ClosingWindow()
+        {
+            //キーフレームで時間を区切る
+            var frame0 = new EasingDoubleKeyFrame(this.Width,  KeyTime.FromTimeSpan(new TimeSpan(1)));
+            var frame1 = new EasingDoubleKeyFrame(0,           KeyTime.FromTimeSpan(new TimeSpan(2500000)));
+            var frame2 = new EasingDoubleKeyFrame(this.Height, KeyTime.FromTimeSpan(new TimeSpan(2500001)));
+            var frame3 = new EasingDoubleKeyFrame(0,           KeyTime.FromTimeSpan(new TimeSpan(5000000)));
+            //キーフレームをアニメーションとしてまとめる
+            var animationWidth = new DoubleAnimationUsingKeyFrames();
+            animationWidth.KeyFrames.Add(frame0);
+            animationWidth.KeyFrames.Add(frame1);
+            //アニメーションをアニメーションさせたいオブジェクトクラスのプロパティにひもづける
+            //...ということはオブジェクト毎にアニメーションさせるのはだめ？
+            Storyboard.SetTargetName(animationWidth, this.Name);
+            Storyboard.SetTargetProperty(animationWidth, new PropertyPath(MainWindow.WidthProperty));
+
+            var animationHeight = new DoubleAnimationUsingKeyFrames();
+            animationHeight.KeyFrames.Add(frame2);
+            animationHeight.KeyFrames.Add(frame3);
+            Storyboard.SetTargetName(animationHeight, this.Name);
+            Storyboard.SetTargetProperty(animationHeight, new PropertyPath(MainWindow.HeightProperty));
+
+            //静的にひもづけられたストーリーボードへアニメーションを登録する
+            myStoryboard = new Storyboard();
+            myStoryboard.Completed += new EventHandler(endAnimation);
+            myStoryboard.Children.Add(animationWidth);
+            myStoryboard.Children.Add(animationHeight);
+            //アニメーションを実行する
+            myStoryboard.Begin(this);
+            
+            myStoryboard.Stop();
+        }
+
+        private void endAnimation(object sender, EventArgs e)
+        {
+            // クローズ処理をキャンセルして、タスクバーの表示も消す
+            this.WindowState = System.Windows.WindowState.Minimized;
+            this.ShowInTaskbar = false;
+        }
     }
 }

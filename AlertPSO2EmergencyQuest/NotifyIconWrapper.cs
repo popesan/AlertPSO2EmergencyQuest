@@ -7,6 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Animation; 
 using System.Windows.Threading;
 using AlertPSO2EmergencyQuest.Model;
 
@@ -42,10 +46,11 @@ namespace AlertPSO2EmergencyQuest
             InitializeComponent();
 
             this.app = app;
-
+            
             // タスクトレイ用のアイコンを設定
             System.IO.Stream iconStream = System.Windows.Application.GetResourceStream(new Uri("pack://application:,,,/Resources/img/Icon1.ico",UriKind.RelativeOrAbsolute )).Stream;
             this.notifyIcon1.Icon = new System.Drawing.Icon(iconStream);
+             
             //contextmenustrip内のtextBoxのクリックイベントをハンドルします
             this.EndText.Click+=new EventHandler(EndText_Click);
             this.SettingText.Click+= new EventHandler(SettingText_Click);
@@ -65,17 +70,10 @@ namespace AlertPSO2EmergencyQuest
             InitializeComponent();
         }*/
 
-
         private void ShowWindow()
         {
-            // ウィンドウ表示&最前面に持ってくる
-            if (win.WindowState == System.Windows.WindowState.Minimized)
-                win.WindowState = System.Windows.WindowState.Normal;
+            win.ShowWindow();
 
-            win.Show();
-            win.Activate();
-            // タスクバーでの表示をする
-            win.ShowInTaskbar = true;
         }
         /// <summary>
         /// タスクトレイ上に表示されたアイコンのクリックイベントハンドラ
@@ -102,7 +100,7 @@ namespace AlertPSO2EmergencyQuest
         private void EndText_Click(object sender, EventArgs e)
         {
             DialogResult result=
-                MessageBox.Show("アプリケーションを終了しますか？", "確認", MessageBoxButtons.OKCancel);
+                System.Windows.Forms.MessageBox.Show("アプリケーションを終了しますか？", "確認", MessageBoxButtons.OKCancel);
             if (result == DialogResult.OK)
             {
                 app.Shutdown();//アプリケーションを終了します
@@ -126,6 +124,7 @@ namespace AlertPSO2EmergencyQuest
         private void Pso2_Event(object sender, EventArgs e)
         {
             Console.WriteLine("PSOいべんとはっせい");
+            
             ShowWindow();
         }
     }
