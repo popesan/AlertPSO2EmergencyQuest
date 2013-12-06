@@ -4,7 +4,7 @@
         xmlns:shell="http://schemas.microsoft.com/winfx/2006/xaml/presentation/shell"
         xmlns:l="clr-namespace:AlertPSO2EmergencyQuest"
         Name="windowBase"
-        Title="MainWindow" Background="Black" Closing="Window_Closing" mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="0" Width="0">
+        Title="MainWindow" Background="Black" Closing="Window_Closing" mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Loaded="windowBase_Loaded" Height="0" Width="0">
     <Window.Resources>
         <ResourceDictionary Source="./Resources/CaptionButtonStyle.xaml"/>
     </Window.Resources>
@@ -27,7 +27,7 @@
                                 Duration="0:0:5" />
                 </Storyboard>
             </BeginStoryboard>
-            
+            <!--
             <BeginStoryboard>
                 <Storyboard >
                     <DoubleAnimation
@@ -40,7 +40,7 @@
                                 Duration="0:0:5" />
                 </Storyboard>
             </BeginStoryboard>
-            
+            -->
         </EventTrigger>
      </Window.Triggers>
     <Grid>

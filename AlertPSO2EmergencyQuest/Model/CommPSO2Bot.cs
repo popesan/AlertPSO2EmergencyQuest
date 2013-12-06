@@ -6,9 +6,9 @@ using System.Text.RegularExpressions;
 
 namespace AlertPSO2EmergencyQuest.Model
 {
-    internal class CommPSO2Bot
+    public  class CommPSO2Bot
     {
-        internal enum status{
+        public  enum status{
             /// <summary>
             /// クエスト準備中
             /// </summary>
@@ -83,7 +83,7 @@ namespace AlertPSO2EmergencyQuest.Model
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        internal CommPSO2Bot()
+        public  CommPSO2Bot()
         {
 #warning タイムライン名をデバッグのため変更tritri ‏@sakatri
             //botName = "sakatri";

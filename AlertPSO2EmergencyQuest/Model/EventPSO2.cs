@@ -26,6 +26,14 @@ namespace AlertPSO2EmergencyQuest.Model
         {
             get { return timeTick; }
         }
+        private CommPSO2Bot bot;
+        /// <summary>
+        /// PSO2ボットのインスタンス
+        /// </summary>
+        public CommPSO2Bot Bot
+        {
+            get { return bot; }
+        }
         /// <summary>
         /// クエスト発生イベント
         /// </summary>
@@ -35,7 +43,7 @@ namespace AlertPSO2EmergencyQuest.Model
 
         private DispatcherTimer timer;
 
-        private CommPSO2Bot bot;
+
 
         /// <summary>
         /// コンストラクタ

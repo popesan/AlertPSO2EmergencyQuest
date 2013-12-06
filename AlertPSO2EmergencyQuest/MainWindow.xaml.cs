@@ -33,8 +33,63 @@ namespace AlertPSO2EmergencyQuest
             this.messageText.Text = pso.GetCurentEventMessageTxt();
             this.StateChanged+=new EventHandler(MainWindow_StateChanged);
             this.pso = pso;
+            this.pso.Quest += new EventHandler(pso_Quest);
         }
-        
+
+        void pso_Quest(object sender, EventArgs e)
+        {
+            switch (pso.Bot.CurrentStatus)
+            {
+
+                case CommPSO2Bot.status.OverTimeQuest:
+                    this.warningLight.Fill = Brushes.Green;
+                    break;
+                case CommPSO2Bot.status.GetReady:
+                    this.warningLight.Fill = Brushes.Yellow;
+                    break;
+                case CommPSO2Bot.status.InQuest:
+                    this.warningLight.Fill = Brushes.Red;
+                    break;
+            }
+        }
+
+        private void windowBase_Loaded(object sender, RoutedEventArgs e)
+        {
+            switch (pso.Bot.CurrentStatus)
+            {
+                
+                case CommPSO2Bot.status.OverTimeQuest:
+                    this.warningLight.Fill = Brushes.Green;
+                    break;
+                case CommPSO2Bot.status.GetReady:
+                    this.warningLight.Fill = Brushes.Yellow;
+                    break;
+                case CommPSO2Bot.status.InQuest:
+                    this.warningLight.Fill = Brushes.Red;
+                    break;
+            }
+            //警告ランプのアニメーション
+            //キーフレームで時間を区切る
+            var frame0 = new EasingDoubleKeyFrame(0, KeyTime.FromTimeSpan(new TimeSpan(1)));
+            var frame1 = new EasingDoubleKeyFrame(1, KeyTime.FromTimeSpan(new TimeSpan(5000000)));
+            //キーフレームをアニメーションとしてまとめる
+            var animationWarningLight = new DoubleAnimationUsingKeyFrames();
+            animationWarningLight.KeyFrames.Add(frame0);
+            animationWarningLight.KeyFrames.Add(frame1);
+            //アニメーションをアニメーションさせたいオブジェクトクラスのプロパティにひもづける
+            //...ということはオブジェクト毎にアニメーションさせるのはだめ？
+            Storyboard.SetTargetName(animationWarningLight, this.warningLight.Name);
+            Storyboard.SetTargetProperty(animationWarningLight, new PropertyPath(Rectangle.OpacityProperty));
+
+            //静的にひもづけられたストーリーボードへアニメーションを登録する
+            myStoryboard = new Storyboard();
+            myStoryboard.Children.Add(animationWarningLight);
+            myStoryboard.AutoReverse = true;
+            myStoryboard.RepeatBehavior = System.Windows.Media.Animation.RepeatBehavior.Forever;
+            //アニメーションを実行する
+            myStoryboard.Begin(this);
+        }
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             // クローズ処理をキャンセルして、タスクバーの表示も消す
@@ -88,6 +143,7 @@ namespace AlertPSO2EmergencyQuest
                     break;
             }
         }
+        /*
         public static RoutedEvent SampleEvent = EventManager.RegisterRoutedEvent(
         "Sample", RoutingStrategy.Tunnel, typeof(RoutedEventHandler), typeof(MainWindow));
 
@@ -96,7 +152,7 @@ namespace AlertPSO2EmergencyQuest
             add { this.AddHandler(SampleEvent, value); }
             remove { this.RemoveHandler(SampleEvent, value); }
         }
-
+        */
         private void ResizeButton_Click(object sender, RoutedEventArgs e)
         {
             // Double型で10から200までアニメーションさせる  
@@ -110,7 +166,6 @@ namespace AlertPSO2EmergencyQuest
         private Storyboard myStoryboard;
         public void ShowWindow()
         {
-            
             this.Show();
 
             //キーフレームで時間を区切る
@@ -189,5 +244,6 @@ namespace AlertPSO2EmergencyQuest
             this.WindowState = System.Windows.WindowState.Minimized;
             this.ShowInTaskbar = false;
         }
+
     }
 }
