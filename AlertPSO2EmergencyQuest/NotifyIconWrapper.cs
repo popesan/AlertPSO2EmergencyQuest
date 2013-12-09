@@ -115,6 +115,9 @@ namespace AlertPSO2EmergencyQuest
         /// <param name="e"></param>
         private void SettingText_Click(object sender, EventArgs e)
         {
+            SettingWindow setWindow = new SettingWindow();
+
+            setWindow.ShowDialog();
         }
         /// <summary>
         /// PSO2イベント発生イベントハンドラ

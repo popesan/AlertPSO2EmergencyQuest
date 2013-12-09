@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("AlertPSO2EmergencyQuest")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("zsas")]
+[assembly: AssemblyCompany("tritri")]
 [assembly: AssemblyProduct("AlertPSO2EmergencyQuest")]
-[assembly: AssemblyCopyright("Copyright © zsas 2013")]
+[assembly: AssemblyCopyright("Copyright © tritri 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
