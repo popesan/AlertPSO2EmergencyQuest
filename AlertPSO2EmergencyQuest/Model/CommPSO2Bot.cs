@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Configuration;
+using System.Windows;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -80,6 +82,25 @@ namespace AlertPSO2EmergencyQuest.Model
         {
             get { return currentStatus; }
         }
+        
+        private string selectShipName;
+        /// <summary>
+        /// 現在選択されているship名
+        /// </summary>
+        public string SelectShipName
+        {
+            get { return selectShipName; }
+            set { selectShipName = value; }
+        }
+        private Dictionary<string, string> botUrls;
+        /// <summary>
+        /// ship名にひもづけられたbotのUrl
+        /// </summary>
+        public Dictionary<string, string> BotUrls
+        {
+            get { return botUrls; }
+        }
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -92,6 +113,21 @@ namespace AlertPSO2EmergencyQuest.Model
             beforeTime = DateTime.Now;
             this.intervalMinutes = 1;
             this.currentStatus = status.OverTimeQuest;
+
+
+            this.selectShipName = Properties.Settings.Default.saveShipName;
+            var shipsBotUrl 
+                = new List<string>
+                    (ConfigurationManager.AppSettings.Get("shipsBotUrl").Split(new char[] { ';' }));
+            botUrls = new Dictionary<string, string>();
+            int counter=1;
+            foreach (var url in shipsBotUrl)
+            {
+                //botアプリ内でのship名は"ship+ship番号"となります
+                botUrls.Add("ship" + counter.ToString(), url);
+                counter++;
+            }
+
         }
 
         /// <summary>

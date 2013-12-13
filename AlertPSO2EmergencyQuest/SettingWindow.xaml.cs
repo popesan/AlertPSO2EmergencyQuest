@@ -11,7 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using AlertPSO2EmergencyQuest.Properties;
-
+using AlertPSO2EmergencyQuest.Model;
 namespace AlertPSO2EmergencyQuest
 {
     /// <summary>
@@ -19,11 +19,25 @@ namespace AlertPSO2EmergencyQuest
     /// </summary>
     public partial class SettingWindow : Window
     {
-        public SettingWindow()
+        private CommPSO2Bot bot;
+        private string currentCheckedRadioButtonTag;
+        public SettingWindow(CommPSO2Bot bot)
         {
             InitializeComponent();
-            Settings.Default.botUrl = "はちゃめちゃ大作成";
-            
+            this.bot = bot;
+
+            Settings.Default.botUrl =this.bot.BotUrls[this.bot.SelectShipName];
+            //ラジオボタンのタグを選択ship識別用オブジェクトとします
+            this.RadioButton_1.Tag = "ship1";
+            this.RadioButton_2.Tag = "ship2";
+            this.RadioButton_3.Tag = "ship3";
+            this.RadioButton_4.Tag = "ship4";
+            this.RadioButton_5.Tag = "ship5";
+            this.RadioButton_6.Tag = "ship6";
+            this.RadioButton_7.Tag = "ship7";
+            this.RadioButton_8.Tag = "ship8";
+            this.RadioButton_9.Tag = "ship9";
+            this.RadioButton_10.Tag = "ship10";
         }
 
         private void Button_SettingOK_Click(object sender, RoutedEventArgs e)
@@ -33,7 +47,7 @@ namespace AlertPSO2EmergencyQuest
             switch (result)
             {
                 case MessageBoxResult.OK:
-                    
+                    this.bot.SelectShipName = this.currentCheckedRadioButtonTag;
                     this.Close();
                     break;
                 case MessageBoxResult.Cancel:
@@ -44,6 +58,22 @@ namespace AlertPSO2EmergencyQuest
         private void Button_SettingCancel_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void RadioButton_10_Checked(object sender, RoutedEventArgs e)
+        {
+            var radioButton = sender as RadioButton;
+            if (radioButton == null)
+                return;
+            this.currentCheckedRadioButtonTag=(string)radioButton.Tag;
+            /*
+            int intIndex = Convert.ToInt32(radioButton.Content.ToString());
+            MessageBox.Show(intIndex.ToString());*/
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

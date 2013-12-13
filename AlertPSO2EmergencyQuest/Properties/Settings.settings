@@ -5,5 +5,8 @@
     <Setting Name="botUrl" Type="System.String" Scope="User">
       <Value Profile="(Default)">pso2_emg_ship10</Value>
     </Setting>
+    <Setting Name="saveShipName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ship10</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

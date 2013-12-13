@@ -34,5 +34,17 @@ namespace AlertPSO2EmergencyQuest.Properties {
                 this["botUrl"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ship10")]
+        public string saveShipName {
+            get {
+                return ((string)(this["saveShipName"]));
+            }
+            set {
+                this["saveShipName"] = value;
+            }
+        }
     }
 }

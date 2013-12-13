@@ -23,6 +23,8 @@ namespace AlertPSO2EmergencyQuest
 
         // 常駐させるウィンドウはここで保持する
         private MainWindow win;
+
+        private EventPSO2 pso; 
         /*
         private string messageTxt;
         /// <summary>
@@ -55,7 +57,7 @@ namespace AlertPSO2EmergencyQuest
             this.EndText.Click+=new EventHandler(EndText_Click);
             this.SettingText.Click+= new EventHandler(SettingText_Click);
 
-            EventPSO2 pso = new EventPSO2();
+            pso = new EventPSO2();
             pso.Quest += Pso2_Event;
             pso.Start();
 
@@ -115,7 +117,7 @@ namespace AlertPSO2EmergencyQuest
         /// <param name="e"></param>
         private void SettingText_Click(object sender, EventArgs e)
         {
-            SettingWindow setWindow = new SettingWindow();
+            SettingWindow setWindow = new SettingWindow(this.pso.Bot);
 
             setWindow.ShowDialog();
         }

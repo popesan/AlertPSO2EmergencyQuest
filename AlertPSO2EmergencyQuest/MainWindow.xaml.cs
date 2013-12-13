@@ -122,7 +122,7 @@ namespace AlertPSO2EmergencyQuest
 
         private void MaxButton_Click(object sender, RoutedEventArgs e)
         {
-            SettingWindow setWindow = new SettingWindow();
+            SettingWindow setWindow = new SettingWindow(this.pso.Bot);
 
             setWindow.ShowDialog();
         }
