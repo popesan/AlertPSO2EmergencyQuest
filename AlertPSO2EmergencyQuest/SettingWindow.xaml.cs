@@ -72,8 +72,40 @@ namespace AlertPSO2EmergencyQuest
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-
+        {   
+            switch (this.bot.SelectShipName)
+            {
+                case "ship1":
+                    this.RadioButton_1.IsChecked = true;
+                    break;
+                case "ship2":
+                    this.RadioButton_2.IsChecked = true;
+                    break;
+                case "ship3":
+                    this.RadioButton_3.IsChecked = true;
+                    break;
+                case "ship4":
+                    this.RadioButton_4.IsChecked = true;
+                    break;
+                case "ship5":
+                    this.RadioButton_5.IsChecked = true;
+                    break;
+                case "ship6":
+                    this.RadioButton_6.IsChecked = true;
+                    break;
+                case "ship7":
+                    this.RadioButton_7.IsChecked = true;
+                    break;
+                case "ship8":
+                    this.RadioButton_8.IsChecked = true;
+                    break;
+                case "ship9":
+                    this.RadioButton_9.IsChecked = true;
+                    break;
+                case "ship10":
+                    this.RadioButton_10.IsChecked = true;
+                    break;
+            }
         }
     }
 }
