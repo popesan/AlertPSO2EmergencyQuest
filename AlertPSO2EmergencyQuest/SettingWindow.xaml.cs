@@ -47,7 +47,8 @@ namespace AlertPSO2EmergencyQuest
             switch (result)
             {
                 case MessageBoxResult.OK:
-                    this.bot.SelectShipName = this.currentCheckedRadioButtonTag;
+                    //this.bot.SelectShipName = this.currentCheckedRadioButtonTag;
+                    this.bot.saveConfig(this.currentCheckedRadioButtonTag);
                     this.Close();
                     break;
                 case MessageBoxResult.Cancel:

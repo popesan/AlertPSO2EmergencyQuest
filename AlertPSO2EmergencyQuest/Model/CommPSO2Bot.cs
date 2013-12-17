@@ -25,9 +25,7 @@ namespace AlertPSO2EmergencyQuest.Model
             OverTimeQuest,
         }
         private CommTwitterizer twitterAccess;
-
-        private String botName;
-
+        
         private DateTime beforeTime;
 
         private double intervalMinutes;
@@ -94,7 +92,7 @@ namespace AlertPSO2EmergencyQuest.Model
         }
         private Dictionary<string, string> botUrls;
         /// <summary>
-        /// ship名にひもづけられたbotのUrl
+        /// ship名にひもづけられたbotのUrl Dictionary
         /// </summary>
         public Dictionary<string, string> BotUrls
         {
@@ -108,7 +106,6 @@ namespace AlertPSO2EmergencyQuest.Model
         {
 #warning タイムライン名をデバッグのため変更tritri ‏@sakatri
             //botName = "sakatri";
-            botName = "pso2_emg_ship10";
             twitterAccess = new CommTwitterizer();
             beforeTime = DateTime.Now;
             this.intervalMinutes = 1;
@@ -116,6 +113,8 @@ namespace AlertPSO2EmergencyQuest.Model
 
 
             this.selectShipName = Properties.Settings.Default.saveShipName;
+            
+
             var shipsBotUrl 
                 = new List<string>
                     (ConfigurationManager.AppSettings.Get("shipsBotUrl").Split(new char[] { ';' }));
@@ -146,7 +145,7 @@ namespace AlertPSO2EmergencyQuest.Model
             {
                 beforeTime = DateTime.Now;
                 DateTime before1hour = DateTime.Now.AddHours(-1);
-                var tweetDates = from x in twitterAccess.GetUserTimeline(this.botName)
+                var tweetDates = from x in twitterAccess.GetUserTimeline(this.botUrls[this.SelectShipName])
                            orderby x.CreatedDate descending
                            where (before1hour <x.CreatedDate)
                            select x.Text;
@@ -291,6 +290,24 @@ namespace AlertPSO2EmergencyQuest.Model
                 }
             }
             return output;
+        }
+        /// <summary>
+        /// ship名をapp.configへと保存します
+        /// </summary>
+        /// <param name="shipName"></param>
+        internal void saveConfig(string shipName)
+        {
+            /*
+            System.Configuration.Configuration config 
+                = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            config.AppSettings.Settings["saveShipName"].Value = shipName;
+            config.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection("appSettings");
+            */
+            
+            this.SelectShipName = shipName;
+            Properties.Settings.Default.saveShipName=shipName;
+            Properties.Settings.Default.Save();
         }
     }
 }
