@@ -15,6 +15,7 @@ using System.Windows.Threading;
 
 using System.Windows.Media.Animation;  
 using AlertPSO2EmergencyQuest.Model;
+using log4net;
 
 namespace AlertPSO2EmergencyQuest
 {
@@ -23,11 +24,14 @@ namespace AlertPSO2EmergencyQuest
     /// </summary>
     public partial class MainWindow : Window
     {
+
+
+
+
         EventPSO2 pso;
         public MainWindow(EventPSO2 pso)
         {
             InitializeComponent();
-
             pso.TimeTick+=this.timer_Tick;
 
             this.messageText.Text = pso.GetCurentEventMessageTxt();
