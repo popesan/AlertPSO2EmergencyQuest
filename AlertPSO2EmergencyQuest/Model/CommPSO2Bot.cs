@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using AlertPSO2EmergencyQuest;
 
 namespace AlertPSO2EmergencyQuest.Model
 {
@@ -145,22 +146,52 @@ namespace AlertPSO2EmergencyQuest.Model
             {
                 beforeTime = DateTime.Now;
                 DateTime before1hour = DateTime.Now.AddHours(-1);
-                var tweetDates = from x in twitterAccess.GetUserTimeline(this.botUrls[this.SelectShipName])
-                           orderby x.CreatedDate descending
-                           where (before1hour <x.CreatedDate)
-                           select x.Text;
 
-                foreach (var tweetData in tweetDates)
+                bool isError = false;
+                int errorCounter=0;
+                do
                 {
-#warning デバッグ用
-                    this.parseStatus(tweetData);
-                    break;
-                    /*
-                    if ((before5Min < data.CreatedDate) && (data.CreatedDate < after5Min))
+                    try
                     {
-                        this.parseStatus(data.Text);
-                    }*/
-                }
+                        var tweetDates = from x in twitterAccess.GetUserTimeline(this.botUrls[this.SelectShipName])
+                                         orderby x.CreatedDate descending
+                                         where (before1hour < x.CreatedDate)
+                                         select x.Text;
+                        foreach (var tweetData in tweetDates)
+                        {
+#warning デバッグ用
+                            this.parseStatus(tweetData);
+                            break;
+                            /*
+                            if ((before5Min < data.CreatedDate) && (data.CreatedDate < after5Min))
+                            {
+                                this.parseStatus(data.Text);
+                            }*/
+                        }
+                        isError = false;
+                    }
+                    catch (Twitterizer.TwitterizerException error)
+                    {
+                        errorCounter++;
+                        if (errorCounter < 5)
+                        {
+                            new AlertPSO2EmaergencyQuestException
+                                (AlertPSO2EmaergencyQuestException.ErrorLevelType.LEVEL_WARN, error.Message, error.StackTrace);
+                        }
+                        else
+                        {
+                            throw new AlertPSO2EmaergencyQuestException
+                                (AlertPSO2EmaergencyQuestException.ErrorLevelType.LEVEL_FATAL, error.Message, error.StackTrace);
+                        }
+                        isError = true;
+                    }
+                    catch(Exception err)
+                    {
+                        throw new AlertPSO2EmaergencyQuestException
+                                (AlertPSO2EmaergencyQuestException.ErrorLevelType.LEVEL_FATAL, err.Message, err.StackTrace);
+                    }
+                } while (isError);
+
             }
             return output;
         }

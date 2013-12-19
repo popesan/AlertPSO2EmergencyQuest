@@ -24,10 +24,6 @@ namespace AlertPSO2EmergencyQuest
     /// </summary>
     public partial class MainWindow : Window
     {
-
-
-
-
         EventPSO2 pso;
         public MainWindow(EventPSO2 pso)
         {

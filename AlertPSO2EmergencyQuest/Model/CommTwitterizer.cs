@@ -156,21 +156,25 @@ namespace AlertPSO2EmergencyQuest.Model
                 UserTimelineOptions option = new UserTimelineOptions()
                 {
                     ScreenName = screenName,
-                    Count=5
+                    Count = 5
                 };
 
                 TwitterResponse<TwitterStatusCollection> res
                     = TwitterTimeline.UserTimeline(this.tokens, option);
-                
+
                 foreach (TwitterStatus status in res.ResponseObject)
                 {
                     Console.WriteLine(status.Text);
                 }
                 return res.ResponseObject;
             }
-            catch (Exception exp)
+            catch (TwitterizerException exp)
             {
                 Console.WriteLine(exp.Message);
+                throw;
+            }
+            catch 
+            {
                 throw;
             }
         }

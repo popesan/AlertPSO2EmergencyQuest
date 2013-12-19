@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 using log4net;
+using AlertPSO2EmergencyQuest;
 
 namespace AlertPSO2EmergencyQuest
 {
@@ -13,23 +14,7 @@ namespace AlertPSO2EmergencyQuest
     /// </summary>
     public partial class App : Application
     {
-        /// <summary>
-        /// log4netインスタンス
-        /// </summary>
-        private static readonly log4net.ILog logger = log4net.LogManager.GetLogger(
-            System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        /// <summary>レベル無し: 仮エラー(デフォルト)</summary>
-        private const int LEVEL_UNKNOWN = -1;
-        /// <summary>レベル5: デバッグ</summary>
-        public const int LEVEL_DEBUG = 5;
-        /// <summary>レベル4: 情報</summary>
-        public const int LEVEL_INFO = 4;
-        /// <summary>レベル3: 注意</summary>
-        public const int LEVEL_WARN = 3;
-        /// <summary>レベル2: エラー</summary>
-        public const int LEVEL_ERROR = 2;
-        /// <summary>レベル1: 重大エラー</summary>
-        public const int LEVEL_FATAL = 1;
+
 
         // 多重起動チェックに使うミューテックス
         private System.Threading.Mutex mutex
@@ -58,6 +43,9 @@ namespace AlertPSO2EmergencyQuest
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
+
+            new AlertPSO2EmaergencyQuestException(AlertPSO2EmaergencyQuestException.ErrorLevelType.LEVEL_INFO,
+                "正常に終了しました", "");
             if (mutex != null)
             {
                 mutex.ReleaseMutex();
@@ -67,7 +55,6 @@ namespace AlertPSO2EmergencyQuest
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            logger.Fatal("起動ok");
             // ミューテックスの所有権を要求
             if (mutex.WaitOne(0, false) == false)
             {
@@ -77,6 +64,8 @@ namespace AlertPSO2EmergencyQuest
                 mutex = null;
                 this.Shutdown();
             }
+            new AlertPSO2EmaergencyQuestException(AlertPSO2EmaergencyQuestException.ErrorLevelType.LEVEL_INFO,
+                "起動しました", "");
         }
     }
     

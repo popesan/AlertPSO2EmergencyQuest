@@ -160,9 +160,9 @@
     <Resource Include="Resources\img\Icon1.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Log4net.Config.xml">
+    <None Include="Log4net.Config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">

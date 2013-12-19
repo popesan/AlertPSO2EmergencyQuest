@@ -19,7 +19,7 @@ namespace AlertPSO2EmergencyQuest
     public partial class NotifyIconWrapper : Component
     {
         private App app;
-        
+
 
         // 常駐させるウィンドウはここで保持する
         private MainWindow win;

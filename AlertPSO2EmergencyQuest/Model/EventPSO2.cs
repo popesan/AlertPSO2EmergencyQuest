@@ -102,6 +102,8 @@ namespace AlertPSO2EmergencyQuest.Model
                 beforeStatus=bot.CurrentStatus;
                 output=true;
                 this.messageTxt = outputStatusTxt(bot.CurrentStatus);
+                new AlertPSO2EmaergencyQuestException(AlertPSO2EmaergencyQuestException.ErrorLevelType.LEVEL_INFO,
+                    this.messageTxt, "");
             }
 #warning デバック用
             /*
