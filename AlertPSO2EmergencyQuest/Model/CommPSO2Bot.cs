@@ -105,7 +105,7 @@ namespace AlertPSO2EmergencyQuest.Model
         /// </summary>
         public  CommPSO2Bot()
         {
-#warning タイムライン名をデバッグのため変更tritri ‏@sakatri
+            //タイムライン名をデバッグのため変更tritri ‏@sakatri
             //botName = "sakatri";
             twitterAccess = new CommTwitterizer();
             beforeTime = DateTime.Now;
@@ -138,7 +138,7 @@ namespace AlertPSO2EmergencyQuest.Model
         internal bool GetStatus()
         {
             bool output = true;
-#warning デバッグ用
+            //デバッグ用
             //if (TimeSpan.FromTicks(DateTime.Now.Ticks - beforeTime.Ticks).Seconds
             //    > this.intervalMinutes)
             if (TimeSpan.FromTicks(DateTime.Now.Ticks-beforeTime.Ticks).Minutes
@@ -159,7 +159,7 @@ namespace AlertPSO2EmergencyQuest.Model
                                          select x.Text;
                         foreach (var tweetData in tweetDates)
                         {
-#warning デバッグ用
+                            //デバッグ用
                             this.parseStatus(tweetData);
                             break;
                             /*
@@ -203,7 +203,8 @@ namespace AlertPSO2EmergencyQuest.Model
         internal void parseStatus(string statusStr)
         {
             DateTime nowtime = DateTime.Now;
-#warning デバッグ用コード
+            
+            //デバッグ用コード
             //nowtime = DateTime.Parse("2013/11/30 22:10:00");
 
             List<DateTime> perseData =
@@ -213,7 +214,7 @@ namespace AlertPSO2EmergencyQuest.Model
             {
                 fromTime = perseData[0];
                 DateTime formTimeBefore30min = perseData[0];
-                formTimeBefore30min=formTimeBefore30min.AddMinutes(-30.0);
+                formTimeBefore30min = formTimeBefore30min.AddMinutes(-30.0);
                 toTime = perseData[1];
                 if ((formTimeBefore30min.Ticks < nowtime.Ticks)
                     && (nowtime.Ticks < fromTime.Ticks))
@@ -230,6 +231,11 @@ namespace AlertPSO2EmergencyQuest.Model
                     this.currentStatus = status.OverTimeQuest;
                 }
 
+            }
+            else
+            {
+                new AlertPSO2EmaergencyQuestException(AlertPSO2EmaergencyQuestException.ErrorLevelType.LEVEL_WARN,
+                    "日付データをパースできませんでした", "CommPSO2Bot.parseStatus(string statusStr)");
             }
             if (perseEvent(statusStr, out event1, out event2))
             {
@@ -263,11 +269,18 @@ namespace AlertPSO2EmergencyQuest.Model
             {
                 System.Text.RegularExpressions.MatchCollection me1 =
                     System.Text.RegularExpressions.Regex.Matches(statusStr, event1Match);
-
-                foreach (var data in me1)
+                if (me1.Count > 0)
                 {
-                    bigEvent = data.ToString();
-                    output = true;
+                    foreach (var data in me1)
+                    {
+                        bigEvent = data.ToString();
+                        output = true;
+                    }
+                }
+                else
+                {
+                    new AlertPSO2EmaergencyQuestException(AlertPSO2EmaergencyQuestException.ErrorLevelType.LEVEL_WARN,
+                        "bigevent名を取得できませんでした", "CommPSO2Bot.perseEvent");
                 }
             }
             if (System.Text.RegularExpressions.Regex.IsMatch(
@@ -275,11 +288,18 @@ namespace AlertPSO2EmergencyQuest.Model
             {
                 System.Text.RegularExpressions.MatchCollection me2 =
                     System.Text.RegularExpressions.Regex.Matches(statusStr, event2Match);
-
-                foreach (var data in me2)
+                if (me2.Count > 0)
                 {
-                    smallEvent = data.ToString();
-                    output = true;
+                    foreach (var data in me2)
+                    {
+                        smallEvent = data.ToString();
+                        output = true;
+                    }
+                }
+                else
+                {
+                    new AlertPSO2EmaergencyQuestException(AlertPSO2EmaergencyQuestException.ErrorLevelType.LEVEL_WARN,
+                        "smallevent名を取得できませんでした", "CommPSO2Bot.perseEvent");
                 }
             }
             return output;

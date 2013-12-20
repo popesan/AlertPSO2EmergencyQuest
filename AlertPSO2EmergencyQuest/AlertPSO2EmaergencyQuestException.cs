@@ -54,7 +54,7 @@ namespace AlertPSO2EmergencyQuest
             LEVEL_UNKNOWN = -1
         }
         
-        private ErrorLevelType errorLevel;
+        private ErrorLevelType errorLevel= ErrorLevelType.LEVEL_UNKNOWN;
         /// <summary>
         /// エラーレベル
         /// </summary>
@@ -63,16 +63,16 @@ namespace AlertPSO2EmergencyQuest
             get { return errorLevel; }
         }
         
-        private string message;
+        private string message=null ;
         /// <summary>
         /// エラーメッセージ
         /// </summary>
-        public string Message
+        new public string Message
         {
             get { return message; }
         }
 
-        private string stuckTrace;
+        private string stuckTrace=null ;
         /// <summary>
         /// スタックトレース
         /// </summary>
