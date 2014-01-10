@@ -313,7 +313,7 @@ namespace AlertPSO2EmergencyQuest.Model
         {
             List<DateTime> output = new List<DateTime>();
             string timeMatch = @"([0-9]|([0-1][0-9]|[2][0-3]))[:][0-5][0-9]+";//hh:mm形式の時間抽出正規表現
-            string dataMatch = @"(\[([1-9]|[1][0-2])/((3[01]|[1-2][0-9])|[0][1-9])\])+";//[MM:DD]形式の日付抽出正規表現
+            string dataMatch = @"(\[([0][1-9]|[1][0-2])/((3[01]|[1-2][0-9])|[0][1-9])\])+";//[MM:DD]形式の日付抽出正規表現
             if (System.Text.RegularExpressions.Regex.IsMatch(
                 statusStr, dataMatch))
             {
